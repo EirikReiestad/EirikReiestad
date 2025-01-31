@@ -1,5 +1,3 @@
-certifi
-charset-normalizer
-idna
+python-dateutil
 requests
-urllib3
+lxml
