@@ -497,7 +497,11 @@ def svg_overwrite(
     """
     tree = etree.parse(filename)
     root = tree.getroot()
-    justify_format(root, "age_data", age_data, 47)
+    if len(age_data) == 28:
+        age_data_length = 48
+    else:
+        age_data_length = 47
+    justify_format(root, "age_data", age_data, age_data_length)
     justify_format(root, "commit_data", commit_data, 22)
     justify_format(root, "star_data", star_data, 14)
     justify_format(root, "repo_data", repo_data, 7)
