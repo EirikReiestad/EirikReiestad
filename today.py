@@ -72,6 +72,19 @@ def simple_request(func_name, query, variables):
     )
 
 
+def safe_request(query, variables):
+    for _ in range(3):  # Retry up to 3 times
+        response = requests.post(
+            "https://api.github.com/graphql",
+            json={"query": query, "variables": variables},
+            headers=HEADERS,
+        )
+        if response.status_code == 200:
+            return response
+        time.sleep(2)  # Wait before retrying
+    raise Exception(f"Failed after retries: {response.status_code}, {response.text}")
+
+
 def graph_commits(start_date, end_date):
     """
     Uses GitHub's GraphQL v4 API to return my total commit count
@@ -185,11 +198,7 @@ def recursive_loc(
         }
     }"""
     variables = {"repo_name": repo_name, "owner": owner, "cursor": cursor}
-    request = requests.post(
-        "https://api.github.com/graphql",
-        json={"query": query, "variables": variables},
-        headers=HEADERS,
-    )  # I cannot use simple_request(), because I want to save the file before raising Exception
+    request = safe_request(query, variables)
     if request.status_code == 200:
         if (
             request.json()["data"]["repository"]["defaultBranchRef"] != None
