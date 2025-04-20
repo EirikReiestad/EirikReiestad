@@ -73,7 +73,7 @@ def simple_request(func_name, query, variables):
 
 
 def safe_request(query, variables):
-    for _ in range(3):  # Retry up to 3 times
+    for _ in range(10):  # Retry up to 10 times
         response = requests.post(
             "https://api.github.com/graphql",
             json={"query": query, "variables": variables},
